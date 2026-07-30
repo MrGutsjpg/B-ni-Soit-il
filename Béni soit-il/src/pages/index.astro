@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro'
+import Header from '../components/Header.astro'
+import Hero from '../components/Hero.astro'
+import Gallery from '../components/Gallery.astro'
+import Contact from '../components/Contact.astro'
+---
+<Base>
+  <Header />
+  <main>
+    <Hero />
+
+    <section id="destaques" class="container mx-auto py-12">
+      <h2 class="font-serif text-2xl text-primary mb-6">Destaques da casa</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card-border p-6 rounded-md">
+          <h3 class="font-semibold">Croissants</h3>
+          <p class="text-gray-600 mt-2">Folhados, amanteigados e crocantes.</p>
+        </div>
+        <div class="card-border p-6 rounded-md">
+          <h3 class="font-semibold">Éclairs</h3>
+          <p class="text-gray-600 mt-2">Recheios clássicos e sazonais.</p>
+        </div>
+        <div class="card-border p-6 rounded-md">
+          <h3 class="font-semibold">Tartes</h3>
+          <p class="text-gray-600 mt-2">Frutas frescas e confeitaria fina.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sobre" class="container mx-auto py-12">
+      <h2 class="font-serif text-2xl text-primary mb-4">Sobre a Béni Soit-Il</h2>
+      <p class="max-w-3xl">Somos uma padaria inspirada na tradição francesa, trabalhando com ingredientes selecionados e técnicas artesanais para criar produtos que valorizam cada detalhe.</p>
+    </section>
+
+    <Gallery />
+
+    <Contact />
+  </main>
+
+  <footer class="border-t mt-12 py-6 text-center text-sm text-gray-600">© Béni Soit-Il</footer>
+</Base>

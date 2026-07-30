@@ -1,0 +1,45 @@
+---
+const { product, onSaved } = Astro.props;
+import { supabase } from '../../lib/supabaseClient';
+---
+<div class="card-border p-4 rounded bg-white">
+  <form id="productForm" class="space-y-3">
+    <div><label class="block text-sm">Título</label><input name="title" value={product?.title||''} class="w-full border px-3 py-2 rounded" required /></div>
+    <div><label class="block text-sm">Descrição</label><textarea name="description" class="w-full border px-3 py-2 rounded">{product?.description||''}</textarea></div>
+    <div><label class="block text-sm">Preço (ex: 12.50)</label><input name="price" value={product?.price||''} class="w-48 border px-3 py-2 rounded" /></div>
+    <div><label class="block text-sm">Imagem</label><input type="file" name="image" accept="image/*" /></div>
+    <div><button class="btn-primary">Salvar</button></div>
+    <div id="msg" class="text-sm text-green-600 hidden"></div>
+  </form>
+
+  <script type="module">
+    import { supabase } from '/src/lib/supabaseClient.js';
+    const form = document.getElementById('productForm');
+    const msg = document.getElementById('msg');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const title = fd.get('title');
+      const description = fd.get('description');
+      const price = fd.get('price');
+      const file = fd.get('image');
+
+      let imagePath = product?.image || null;
+      if (file && file.size) {
+        const fileName = `${Date.now()}-${file.name}`;
+        const { data, error: upErr } = await supabase.storage.from('product-images').upload(fileName, file);
+        if (upErr) { msg.textContent = upErr.message; msg.classList.remove('hidden'); return; }
+        imagePath = data.path;
+      }
+
+      const payload = { title, description, price, image: imagePath };
+      if (product && product.id) {
+        await supabase.from('products').update(payload).eq('id', product.id);
+      } else {
+        await supabase.from('products').insert(payload);
+      }
+      msg.textContent = 'Salvo.'; msg.classList.remove('hidden');
+      setTimeout(()=> location.reload(), 800);
+    });
+  </script>
+</div>

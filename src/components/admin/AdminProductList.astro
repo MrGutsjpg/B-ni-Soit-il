@@ -1,0 +1,23 @@
+---
+const { products } = Astro.props;
+import { supabase } from '../../lib/supabaseClient';
+---
+<div class="space-y-3">
+  {products.map(p => (
+    <div class="flex items-center gap-4 card-border p-3 rounded bg-white">
+      <img src={p.image ? `/images/placeholder.svg` : '/images/placeholder.svg'} alt="" class="w-20 h-20 object-cover rounded" />
+      <div class="flex-1">
+        <div class="font-semibold">{p.title}</div>
+        <div class="text-sm text-gray-600">R$ {p.price}</div>
+      </div>
+      <div class="flex gap-2">
+        <button class="border px-3 py-1 rounded" onClick={() => { location.href = `/admin/dashboard?edit=${p.id}` }}>Editar</button>
+        <button class="border px-3 py-1 rounded" onClick={async ()=>{
+          if (!confirm('Remover produto?')) return;
+          await supabase.from('products').delete().eq('id', p.id);
+          location.reload();
+        }}>Remover</button>
+      </div>
+    </div>
+  ))}
+</div>

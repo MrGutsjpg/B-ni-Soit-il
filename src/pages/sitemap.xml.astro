@@ -1,0 +1,15 @@
+---
+const site = import.meta.env.SITE || '';
+const pages = ['/', '/cardapio', '/encomendas', '/sobre', '/admin/supabase-login'];
+---
+---
+<rss xmlns:xhtml="http://www.w3.org/1999/xhtml" version="2.0">
+  <channel>
+    <title>Béni Soit-Il Sitemap</title>
+    {pages.map(p => (
+      <item>
+        <link>{site + p}</link>
+      </item>
+    ))}
+  </channel>
+</rss>

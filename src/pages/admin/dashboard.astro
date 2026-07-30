@@ -1,0 +1,75 @@
+---
+import Base from '../../layouts/Base.astro'
+import { supabase } from '../../lib/supabaseClient';
+import AdminProductList from '../../components/admin/AdminProductList.astro';
+import AdminProductForm from '../../components/admin/AdminProductForm.astro';
+import AdminClients from '../../components/admin/AdminClients.astro';
+
+let editId = null;
+try {
+  const rawUrl = Astro && Astro.request && Astro.request.url ? Astro.request.url : null;
+  const params = rawUrl ? new URL(rawUrl).searchParams : null;
+  editId = params ? params.get('edit') : null;
+} catch (e) {
+  editId = null;
+}
+let products = [];
+try {
+  const { data } = await supabase.from('products').select('*').order('id', { ascending: true });
+  products = data || [];
+} catch (e) {
+  products = [];
+}
+let productToEdit = null;
+if (editId) productToEdit = products.find(p => String(p.id) === String(editId));
+---
+<Base>
+  <main class="container mx-auto py-12">
+    <h1 class="font-serif text-2xl text-primary mb-4">Painel Admin</h1>
+    <section class="grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2">
+        <h2 class="font-semibold mb-3">Produtos</h2>
+        <AdminProductList products={products} />
+      </div>
+      <div>
+        <h2 class="font-semibold mb-3">Criar / Editar</h2>
+        <AdminProductForm product={productToEdit} />
+      </div>
+    </section>
+    <section class="mt-8">
+      <div class="grid md:grid-cols-2 gap-6">
+        <div>
+          <h2 class="font-semibold mb-3">Clientes</h2>
+          <AdminClients />
+        </div>
+        <div>
+          <h2 class="font-semibold mb-3">Pedidos (via Supabase)</h2>
+          <div id="orders">Carregando...</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { supabase } from '/src/lib/supabaseClient.js';
+    const ordersEl = document.getElementById('orders');
+
+    // Redirect to login if not authenticated
+    (async ()=>{
+      const { data: sessionData } = await supabase.auth.getSession();
+      const session = sessionData.session;
+      if (!session) {
+        location.href = '/admin/supabase-login';
+        return;
+      }
+
+      try {
+        const { data } = await supabase.from('orders').select('*').order('createdAt', { ascending: false });
+        if (!data || !data.length) { ordersEl.textContent = 'Nenhum pedido.'; return; }
+        ordersEl.innerHTML = data.map(o=>`<div class="card-border p-3 rounded mb-2"><div class="font-semibold">${o.product} — ${o.quantity}</div><div class="text-sm text-gray-600">${o.name} • ${o.contact} • ${new Date(o.createdAt).toLocaleString()}</div></div>`).join('');
+      } catch (e) {
+        ordersEl.textContent = 'Erro ao carregar pedidos.';
+      }
+    })();
+  </script>
+</Base>

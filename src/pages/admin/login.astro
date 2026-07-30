@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro'
+---
+<Base>
+  <main class="container mx-auto py-12 max-w-md">
+    <h1 class="font-serif text-2xl text-primary mb-4">Admin</h1>
+    <div id="content"></div>
+    <script>
+      (async function(){
+        const content = document.getElementById('content');
+        // Check if admin exists by trying to fetch a login (we'll ask server indirectly)
+        // Simpler: fetch /api/admin/check by attempting to read .admin.json via a lightweight request.
+        // Since we didn't create a dedicated check endpoint, attempt login with blank to probe file existence.
+        let hasAdmin = false;
+        try {
+          const res = await fetch('/api/admin/login', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify({email:'', password:''}) });
+          // If server returns 500 or 400, assume no admin file -> allow setup
+          if (res.status === 500 || res.status === 400) hasAdmin = false;
+          else hasAdmin = true;
+        } catch (e) {
+          hasAdmin = false;
+        }
+
+        if (!hasAdmin) {
+          content.innerHTML = `
+            <p class="mb-4 text-sm text-gray-700">Primeiro acesso: crie um usuário administrador.</p>
+            <form id="registerForm" class="space-y-3">
+              <div><label class="block text-sm">Email</label><input name="email" class="w-full border px-3 py-2 rounded" required /></div>
+              <div><label class="block text-sm">Senha</label><input name="password" type="password" class="w-full border px-3 py-2 rounded" required /></div>
+              <div><button class="btn-primary">Criar administrador</button></div>
+              <div id="msg" class="text-sm text-red-600 hidden"></div>
+            </form>
+          `;
+
+          document.getElementById('registerForm').addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            const body = { email: f.get('email'), password: f.get('password') };
+            const res = await fetch('/api/admin/register', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify(body) });
+            const msg = document.getElementById('msg');
+            if (res.status === 201) {
+              msg.classList.remove('text-red-600');
+              msg.classList.add('text-green-600');
+              msg.textContent = 'Administrador criado com sucesso. Recarregue a página para efetuar login.';
+              msg.classList.remove('hidden');
+            } else {
+              const text = await res.text();
+              msg.textContent = text;
+              msg.classList.remove('hidden');
+            }
+          });
+        } else {
+          content.innerHTML = `
+            <p class="mb-4 text-sm text-gray-700">Faça login para acessar o painel administrativo.</p>
+            <form id="loginForm" class="space-y-3">
+              <div><label class="block text-sm">Email</label><input name="email" class="w-full border px-3 py-2 rounded" required /></div>
+              <div><label class="block text-sm">Senha</label><input name="password" type="password" class="w-full border px-3 py-2 rounded" required /></div>
+              <div><button class="btn-primary">Entrar</button></div>
+              <div id="msg" class="text-sm text-red-600 hidden"></div>
+            </form>
+          `;
+          document.getElementById('loginForm').addEventListener('submit', async (e)=>{
+            e.preventDefault();
+            const f = new FormData(e.currentTarget);
+            const body = { email: f.get('email'), password: f.get('password') };
+            const res = await fetch('/api/admin/login', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify(body) });
+            const msg = document.getElementById('msg');
+            if (res.status === 200) {
+              location.href = '/admin';
+            } else {
+              const text = await res.text();
+              msg.textContent = text;
+              msg.classList.remove('hidden');
+            }
+          });
+        }
+      })();
+    </script>
+  </main>
+</Base>

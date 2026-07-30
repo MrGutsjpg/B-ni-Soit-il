@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro'
+import Header from '../components/Header.astro'
+import ProductCard from '../components/ProductCard.astro'
+
+const products = [
+  { id: 1, title: 'Croissant amanteigado', description: 'Massa folhada, amanteigado.', price: '8,50', image: '/images/placeholder.svg' },
+  { id: 2, title: 'Pain au chocolat', description: 'Chocolate belga no interior.', price: '9,00', image: '/images/placeholder.svg' },
+  { id: 3, title: 'Éclair de baunilha', description: 'Recheio clássico de baunilha.', price: '12,00', image: '/images/placeholder.svg' },
+  { id: 4, title: 'Tarte de limão', description: 'Crosta fina e creme cítrico.', price: '18,00', image: '/images/placeholder.svg' }
+];
+---
+<Base>
+  <Header />
+  <main class="py-12 container mx-auto">
+    <h1 class="font-serif text-3xl text-primary mb-6">Cardápio</h1>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {products.map(p => (
+        <ProductCard {...p} />
+      ))}
+    </div>
+  </main>
+</Base>

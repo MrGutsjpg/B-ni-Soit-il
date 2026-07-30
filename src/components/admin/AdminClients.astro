@@ -1,0 +1,196 @@
+---
+import { supabase } from '../../lib/supabaseClient';
+---
+<div>
+  <h2 class="font-semibold mb-3">Clientes</h2>
+  <div class="mb-4 flex items-center gap-3">
+    <form id="clientForm" class="flex gap-2">
+      <input name="name" placeholder="Nome" class="border px-2 py-1 rounded" required />
+      <input name="contact" placeholder="Contato (WhatsApp)" class="border px-2 py-1 rounded" required />
+      <button class="btn-primary">Adicionar</button>
+    </form>
+    <div class="ml-auto">
+      <input id="searchInput" placeholder="Buscar cliente" class="border px-2 py-1 rounded" />
+    </div>
+  </div>
+
+  <div id="clientsList">Carregando clientes...</div>
+
+  <div class="flex justify-between items-center mt-3">
+    <div id="pagination" class="text-sm text-gray-600">&nbsp;</div>
+    <div id="clientActions"></div>
+  </div>
+
+  <div id="clientOrders" class="mt-6">Selecione um cliente para ver pedidos.</div>
+
+  <script type="module">
+    import { supabase } from '/src/lib/supabaseClient.js';
+    const clientsList = document.getElementById('clientsList');
+    const clientOrders = document.getElementById('clientOrders');
+    const form = document.getElementById('clientForm');
+
+    async function loadClients() {
+      // try Supabase first
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData.session;
+        if (session) {
+          const { data, error } = await supabase.from('clients').select('*').order('created_at', { ascending: false });
+          if (error) throw error;
+          renderClients(data || [], true);
+          return;
+        }
+      } catch (e) {
+        // fallback to local
+      }
+
+      // local fallback
+      try {
+        const res = await fetch('/api/clients-local');
+        const data = await res.json();
+        renderClients(data || [], false);
+      } catch (e) {
+        clientsList.textContent = 'Erro ao carregar clientes.';
+      }
+    }
+
+    // pagination state
+    let currentPage = 1;
+    const pageSize = 8;
+    let lastClients = [];
+
+    function renderClients(clients, isSupabase) {
+      lastClients = clients;
+      const search = document.getElementById('searchInput').value.trim().toLowerCase();
+      let filtered = clients.filter(c => !search || c.name.toLowerCase().includes(search) || (c.contact||'').toLowerCase().includes(search));
+      const total = filtered.length;
+      const pages = Math.max(1, Math.ceil(total / pageSize));
+      if (currentPage > pages) currentPage = pages;
+      const start = (currentPage -1) * pageSize;
+      const pageItems = filtered.slice(start, start + pageSize);
+
+      if (!pageItems.length) { clientsList.innerHTML = '<div>Nenhum cliente.</div>'; document.getElementById('pagination').textContent = ''; return; }
+      clientsList.innerHTML = pageItems.map(c => (`
+        <div class="card-border p-3 rounded mb-2 flex items-center justify-between">
+          <div>
+            <div class="font-semibold">${c.name}</div>
+            <div class="text-sm text-gray-600">${c.contact}</div>
+          </div>
+          <div class="flex gap-2">
+            <button class="border px-3 py-1 rounded" data-id="${c.id}" data-contact="${c.contact}" data-name="${c.name}">Pedidos</button>
+            <button class="border px-3 py-1 rounded" data-edit-id="${c.id}" data-edit-name="${c.name}" data-edit-contact="${c.contact}">Editar</button>
+            <button class="border px-3 py-1 rounded" data-del-id="${c.id}">Remover</button>
+          </div>
+        </div>
+      `)).join('');
+
+      document.getElementById('pagination').textContent = `Página ${currentPage} de ${pages} — ${total} clientes`;
+
+      // attach click handlers
+      clientsList.querySelectorAll('button[data-id]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = btn.getAttribute('data-id');
+          const contact = btn.getAttribute('data-contact');
+          const name = btn.getAttribute('data-name');
+          clientOrders.innerHTML = 'Carregando pedidos...';
+          // try Supabase orders
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const session = sessionData.session;
+            if (session) {
+              const { data: orders } = await supabase.from('orders').select('*').ilike('contact', `%${contact}%`).order('createdAt', { ascending: false });
+              renderOrders(orders || []);
+              return;
+            }
+          } catch (err) {}
+
+          // fallback to local orders
+          try {
+            const res = await fetch('/api/orders');
+            const data = await res.json();
+            const filtered = (data || []).filter(o => o.contact && o.contact.includes(contact));
+            renderOrders(filtered);
+          } catch (e) {
+            clientOrders.textContent = 'Erro ao carregar pedidos.';
+          }
+        });
+      });
+
+      // edit handlers
+      clientsList.querySelectorAll('button[data-edit-id]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = btn.getAttribute('data-edit-id');
+          const name = btn.getAttribute('data-edit-name');
+          const contact = btn.getAttribute('data-edit-contact');
+          // prefill form for editing
+          form.querySelector('[name="name"]').value = name;
+          form.querySelector('[name="contact"]').value = contact;
+          form.dataset.editId = id;
+          document.getElementById('clientActions').innerHTML = '<button id="cancelEdit" class="border px-3 py-1 rounded">Cancelar</button>';
+          document.getElementById('cancelEdit').addEventListener('click', ()=>{ form.reset(); delete form.dataset.editId; document.getElementById('clientActions').innerHTML=''; });
+        });
+      });
+
+      // delete handlers
+      clientsList.querySelectorAll('button[data-del-id]').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = btn.getAttribute('data-del-id');
+          if (!confirm('Remover este cliente?')) return;
+          try {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const session = sessionData.session;
+            if (session) {
+              await supabase.from('clients').delete().eq('id', id);
+            } else {
+              await fetch('/api/clients-local', { method: 'DELETE', headers: {'content-type':'application/json'}, body: JSON.stringify({ id }) });
+            }
+            loadClients();
+          } catch (err) {
+            alert('Erro ao remover cliente');
+          }
+        });
+      });
+    }
+
+    function renderOrders(orders) {
+      if (!orders.length) { clientOrders.innerHTML = '<div>Nenhum pedido para este cliente.</div>'; return; }
+      clientOrders.innerHTML = orders.map(o => `<div class="card-border p-3 rounded mb-2"><div class="font-semibold">${o.product} — ${o.quantity}</div><div class="text-sm text-gray-600">${o.name} • ${o.contact} • ${new Date(o.createdAt || o.created_at).toLocaleString()}</div></div>`).join('');
+    }
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const fd = new FormData(form);
+      const payload = { name: fd.get('name'), contact: fd.get('contact') };
+      // if editing
+      const editId = form.dataset.editId;
+      if (editId) payload.id = editId;
+      // try supabase first
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const session = sessionData.session;
+        if (session) {
+          if (editId) await supabase.from('clients').update(payload).eq('id', editId);
+          else await supabase.from('clients').insert(payload);
+          form.reset();
+          delete form.dataset.editId;
+          document.getElementById('clientActions').innerHTML = '';
+          loadClients();
+          return;
+        }
+      } catch (e) {}
+
+      // fallback local
+      if (editId) {
+        await fetch('/api/clients-local', { method: 'PUT', headers: {'content-type':'application/json'}, body: JSON.stringify(payload) });
+        delete form.dataset.editId;
+        document.getElementById('clientActions').innerHTML = '';
+      } else {
+        await fetch('/api/clients-local', { method: 'POST', headers: {'content-type':'application/json'}, body: JSON.stringify(payload) });
+      }
+      form.reset();
+      loadClients();
+    });
+
+    loadClients();
+  </script>
+</div>

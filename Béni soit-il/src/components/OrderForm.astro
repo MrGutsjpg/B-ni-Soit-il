@@ -1,0 +1,55 @@
+---
+---
+<div class="card-border p-6 rounded-md bg-white">
+  <h2 class="font-serif text-xl text-primary mb-4">Fazer encomenda</h2>
+  <form id="orderForm" class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium">Nome</label>
+      <input name="name" required class="w-full border px-3 py-2 rounded-md" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Contato (WhatsApp)</label>
+      <input name="contact" required class="w-full border px-3 py-2 rounded-md" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Produto</label>
+      <input id="productInput" name="product" class="w-full border px-3 py-2 rounded-md" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Quantidade</label>
+      <input name="quantity" type="number" min="1" value="1" class="w-32 border px-3 py-2 rounded-md" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Data desejada</label>
+      <input name="date" type="date" class="w-48 border px-3 py-2 rounded-md" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Observações</label>
+      <textarea name="notes" rows="3" class="w-full border px-3 py-2 rounded-md"></textarea>
+    </div>
+    <div class="pt-2">
+      <button type="submit" class="btn-primary">Enviar encomenda</button>
+    </div>
+    <div id="orderMessage" class="text-sm text-green-600 mt-2 hidden">Encomenda enviada (placeholder).</div>
+  </form>
+
+  <script>
+    (function(){
+      const form = document.getElementById('orderForm');
+      const msg = document.getElementById('orderMessage');
+      // prefill product from query param
+      const params = new URLSearchParams(location.search);
+      const product = params.get('product');
+      if (product) document.getElementById('productInput').value = product;
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        // Placeholder behavior: log and show message. Replace with Supabase/API later.
+        console.log('Encomenda (placeholder):', Object.fromEntries(data.entries()));
+        msg.classList.remove('hidden');
+        form.reset();
+      });
+    })();
+  </script>
+</div>
