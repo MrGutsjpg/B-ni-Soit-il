@@ -1,0 +1,39 @@
+<!DOCTYPE html><html lang="pt-BR"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Béni Soit-Il — Padaria e Confeitaria</title><meta name="description" content="Béni Soit-Il — padaria e confeitaria artesanal inspirada na França. Croissants, éclairs, tartes e encomendas."><meta property="og:title" content="Béni Soit-Il — Padaria e Confeitaria"><meta property="og:description" content="Arte francesa em cada detalhe — Croissants, éclairs, tartes e encomendas."><meta property="og:image" content="/images/placeholder.svg"><link rel="icon" href="/favicon.ico"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="/B-ni-Soit-il/_astro/dashboard.C8OhCsiN.css">
+<link rel="stylesheet" href="/B-ni-Soit-il/_astro/dashboard.B0S0yKZ6.css"></head> <body class="min-h-screen">  <header class="container mx-auto py-6 flex items-center justify-between"> <div class="flex items-center gap-4"> <div class="text-2xl font-nectar text-primary">Béni Soit-Il</div> </div> <nav class="hidden md:flex gap-6 text-sm"> <a href="#destaques" class="text-[var(--color-black)]">Destaques</a> <a href="#sobre" class="text-[var(--color-black)]">Sobre</a> <a href="#galeria" class="text-[var(--color-black)]">Galeria</a> <a href="#contato" class="text-[var(--color-black)]">Contato</a> </nav> </header> <main class="py-12 container mx-auto"> <div class="max-w-2xl mx-auto"> <div class="card-border p-6 rounded-md bg-white"> <h2 class="font-serif text-xl text-primary mb-4">Fazer encomenda</h2> <form id="orderForm" class="space-y-4"> <div> <label class="block text-sm font-medium">Nome</label> <input name="name" required class="w-full border px-3 py-2 rounded-md"> </div> <div> <label class="block text-sm font-medium">Contato (WhatsApp)</label> <input name="contact" required class="w-full border px-3 py-2 rounded-md"> </div> <div> <label class="block text-sm font-medium">Produto</label> <input id="productInput" name="product" class="w-full border px-3 py-2 rounded-md"> </div> <div> <label class="block text-sm font-medium">Quantidade</label> <input name="quantity" type="number" min="1" value="1" class="w-32 border px-3 py-2 rounded-md"> </div> <div> <label class="block text-sm font-medium">Data desejada</label> <input name="date" type="date" class="w-48 border px-3 py-2 rounded-md"> </div> <div> <label class="block text-sm font-medium">Observações</label> <textarea name="notes" rows="3" class="w-full border px-3 py-2 rounded-md"></textarea> </div> <div class="pt-2"> <button type="submit" class="btn-primary">Enviar encomenda</button> </div> <div id="orderMessage" class="text-sm text-green-600 mt-2 hidden">Encomenda enviada (placeholder).</div> </form> <script type="module">
+    import { supabase } from '/src/lib/supabaseClient.js';
+    (function(){
+      const form = document.getElementById('orderForm');
+      const msg = document.getElementById('orderMessage');
+      // prefill product from query param
+      const params = new URLSearchParams(location.search);
+      const product = params.get('product');
+      if (product) document.getElementById('productInput').value = product;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        const payload = Object.fromEntries(data.entries());
+        // try to store in Supabase orders table if available, otherwise fallback to local endpoint
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const session = sessionData.session;
+          if (session) {
+            await supabase.from('orders').insert(payload);
+          } else {
+            await fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
+          }
+        } catch (e) {
+          try { await fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); } catch (err) { console.warn('Falha ao gravar order localmente', err); }
+        }
+
+        // abrir WhatsApp com mensagem predefinida para o número da loja
+        const phone = '5543991788577';
+        const message = `Olá, gostaria de fazer uma encomenda:\nNome: ${payload.name}\nContato: ${payload.contact}\nProduto: ${payload.product}\nQuantidade: ${payload.quantity}\nData: ${payload.date}\nObservações: ${payload.notes}`;
+        const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(message)}`;
+        window.open(url, '_blank');
+
+        msg.classList.remove('hidden');
+        form.reset();
+      });
+    })();
+  </script> </div> </div> </main>  </body></html>

@@ -1,0 +1,1 @@
+TypeError: supabaseServer.from(...).select(...).order is not a function
