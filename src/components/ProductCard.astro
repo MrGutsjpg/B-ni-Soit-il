@@ -7,6 +7,6 @@ const { title, description, price, image, id } = Astro.props;
   <p class="text-gray-600 mt-2">{description}</p>
   <div class="mt-4 flex items-center justify-between">
     <span class="font-semibold">R$ {price}</span>
-    <a class="btn-primary" href={`/encomendas?product=${encodeURIComponent(title)}&id=${id}`}>Encomendar</a>
+    <a class="btn-primary" href={Astro.resolve(`/encomendas?product=${encodeURIComponent(title)}&id=${id}`)}>Encomendar</a>
   </div>
 </article>
