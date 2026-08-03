@@ -2,15 +2,13 @@
 const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
 const adminLoginUrl = `${siteBase}/admin/supabase-login`;
 ---
-<header class="container mx-auto py-6 flex items-center justify-between">
-  <div class="flex items-center gap-4">
-    <div class="text-2xl font-nectar text-primary">Béni Soit-Il</div>
-  </div>
-  <nav class="flex flex-wrap gap-4 text-sm items-center">
-    <a href="#destaques" class="text-[var(--color-black)]">Destaques</a>
-    <a href="#sobre" class="text-[var(--color-black)]">Sobre</a>
-    <a href="#galeria" class="text-[var(--color-black)]">Galeria</a>
-    <a href="#contato" class="text-[var(--color-black)]">Contato</a>
-    <a href={adminLoginUrl} class="btn-primary px-4 py-2">Login ADM</a>
+<header class="container mx-auto flex flex-col gap-4 py-6 md:flex-row md:items-center md:justify-between">
+  <div class="site-brand">Béni Soit-Il</div>
+  <nav class="site-nav">
+    <a href="#destaques">Destaques</a>
+    <a href="#sobre">Sobre</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#contato">Contato</a>
+    <a href={adminLoginUrl} class="btn-primary">Login ADM</a>
   </nav>
 </header>

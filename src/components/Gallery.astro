@@ -3,11 +3,14 @@ const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.r
 const placeholderImage = `${siteBase}/images/placeholder.svg`;
 ---
 <section id="galeria" class="container mx-auto py-16">
-  <h2 class="font-serif text-2xl text-primary mb-6">Galeria</h2>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
+  <div class="text-center">
+    <h2 class="section-heading">Galeria</h2>
+    <p class="section-subtitle">Um vislumbre dos nossos produtos e da apresentação cuidadosa que entregamos em cada encomenda.</p>
+  </div>
+  <div class="gallery-grid mt-10">
+    <img src={placeholderImage} alt="produto" />
+    <img src={placeholderImage} alt="produto" />
+    <img src={placeholderImage} alt="produto" />
+    <img src={placeholderImage} alt="produto" />
   </div>
 </section>

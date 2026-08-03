@@ -10,27 +10,34 @@ import Contact from '../components/Contact.astro'
   <main>
     <Hero />
 
-    <section id="destaques" class="container mx-auto py-12">
-      <h2 class="font-serif text-2xl text-primary mb-6">Destaques da casa</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="card-border p-6 rounded-md">
-          <h3 class="font-semibold">Croissants</h3>
-          <p class="text-gray-600 mt-2">Folhados, amanteigados e crocantes.</p>
+    <section id="destaques" class="container mx-auto py-16">
+      <div class="text-center">
+        <h2 class="section-heading">Destaques da casa</h2>
+        <p class="section-subtitle">Descubra os clássicos que mais encantam nossos clientes: maciez, sabor e acabamento impecável em cada fornada.</p>
+      </div>
+      <div class="feature-grid mt-10">
+        <div class="feature-card">
+          <h3>Croissants</h3>
+          <p>Folhados, amanteigados e crocantes, feitos com massa maturada e manteiga premium.</p>
         </div>
-        <div class="card-border p-6 rounded-md">
-          <h3 class="font-semibold">Éclairs</h3>
-          <p class="text-gray-600 mt-2">Recheios clássicos e sazonais.</p>
+        <div class="feature-card">
+          <h3>Éclairs</h3>
+          <p>Recheios clássicos e sazonais, com acabamento delicado e cobertura brilhante.</p>
         </div>
-        <div class="card-border p-6 rounded-md">
-          <h3 class="font-semibold">Tartes</h3>
-          <p class="text-gray-600 mt-2">Frutas frescas e confeitaria fina.</p>
+        <div class="feature-card">
+          <h3>Tartes</h3>
+          <p>Frutas frescas e confeitaria fina em bases crocantes e cremosas.</p>
         </div>
       </div>
     </section>
 
-    <section id="sobre" class="container mx-auto py-12">
-      <h2 class="font-serif text-2xl text-primary mb-4">Sobre a Béni Soit-Il</h2>
-      <p class="max-w-3xl">Somos uma padaria inspirada na tradição francesa, trabalhando com ingredientes selecionados e técnicas artesanais para criar produtos que valorizam cada detalhe.</p>
+    <section id="sobre" class="container mx-auto py-16">
+      <div class="text-center">
+        <h2 class="section-heading">Sobre a Béni Soit-Il</h2>
+      </div>
+      <div class="max-w-3xl mx-auto rounded-[32px] border border-[var(--color-border)] bg-[var(--color-surface)] p-10 shadow-[0_18px_40px_rgba(17,17,17,0.05)]">
+        <p class="section-subtitle">Somos uma padaria inspirada na tradição francesa, trabalhando com ingredientes selecionados e técnicas artesanais para criar produtos que valorizam cada detalhe.</p>
+      </div>
     </section>
 
     <Gallery />
