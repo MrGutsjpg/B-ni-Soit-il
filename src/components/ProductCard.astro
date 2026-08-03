@@ -1,7 +1,6 @@
 ---
 const { title, description, price, image, id } = Astro.props;
-const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
-const productOrderUrl = `${siteBase}/encomendas?product=${encodeURIComponent(title)}&id=${id}`;
+const whatsappProductUrl = `https://wa.me/5543991788577?text=${encodeURIComponent(`Olá, quero encomendar o produto ${title} por R$ ${price}.`)}`;
 ---
 <article class="card-border p-4 rounded-md bg-white">
   <img src={image} alt={title} class="w-full h-40 object-cover rounded-md mb-4" />
@@ -9,6 +8,6 @@ const productOrderUrl = `${siteBase}/encomendas?product=${encodeURIComponent(tit
   <p class="text-gray-600 mt-2">{description}</p>
   <div class="mt-4 flex items-center justify-between">
     <span class="font-semibold">R$ {price}</span>
-    <a class="btn-primary" href={productOrderUrl}>Encomendar</a>
+    <a class="btn-primary" href={whatsappProductUrl} target="_blank" rel="noopener noreferrer">Encomendar</a>
   </div>
 </article>

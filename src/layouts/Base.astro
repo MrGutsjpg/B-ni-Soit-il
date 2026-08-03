@@ -20,6 +20,8 @@ const faviconUrl = `${siteBase}/favicon.ico`;
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
   </head>
   <body class="min-h-screen">
-    <slot />
+    <div class="page-frame">
+      <slot />
+    </div>
   </body>
 </html>

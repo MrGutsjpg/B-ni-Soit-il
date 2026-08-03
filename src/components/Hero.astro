@@ -1,15 +1,15 @@
 ---
 const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
-const menuCardapio = `${siteBase}/cardapio`;
-const menuEncomendas = `${siteBase}/encomendas`;
+const menuCardapio = 'https://www.ifood.com.br/delivery/londrina-pr/beni-soit-il-parque-residencial-joaquim-toledo-piza/f472c48f-c875-4ce6-b06f-a3cbe85b8d69?UTM_Medium=share';
+const whatsappOrderUrl = 'https://wa.me/5543991788577?text=' + encodeURIComponent('Olá, quero fazer um pedido da Béni Soit-Il.');
 ---
 <section class="container mx-auto text-center py-20">
   <div class="max-w-2xl mx-auto">
     <h1 class="font-serif text-4xl md:text-6xl text-primary">Arte francesa em cada detalhe</h1>
     <p class="mt-6 text-gray-700">Tradição e cuidado artesanal em produtos de padaria fina.</p>
-    <div class="mt-8 flex justify-center gap-4">
-      <a href={menuCardapio} class="btn-primary">Ver cardápio</a>
-      <a href={menuEncomendas} class="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-md">Fazer encomenda</a>
+    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+      <a href={menuCardapio} target="_blank" rel="noopener noreferrer" class="btn-primary">Ver cardápio</a>
+      <a href={whatsappOrderUrl} target="_blank" rel="noopener noreferrer" class="btn-secondary">Fazer encomenda</a>
     </div>
   </div>
 </section>
