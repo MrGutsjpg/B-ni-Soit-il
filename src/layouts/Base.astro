@@ -1,5 +1,8 @@
 ---
 import '../styles/global.css'
+const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
+const ogImage = `${siteBase}/images/placeholder.svg`;
+const faviconUrl = `${siteBase}/favicon.ico`;
 ---
 <!doctype html>
 <html lang="pt-BR">
@@ -10,8 +13,8 @@ import '../styles/global.css'
     <meta name="description" content="Béni Soit-Il — padaria e confeitaria artesanal inspirada na França. Croissants, éclairs, tartes e encomendas." />
     <meta property="og:title" content="Béni Soit-Il — Padaria e Confeitaria" />
     <meta property="og:description" content="Arte francesa em cada detalhe — Croissants, éclairs, tartes e encomendas." />
-    <meta property="og:image" content="/images/placeholder.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta property="og:image" content={ogImage} />
+    <link rel="icon" href={faviconUrl} />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">

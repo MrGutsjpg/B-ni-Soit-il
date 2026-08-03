@@ -59,7 +59,8 @@ if (editId) productToEdit = products.find(p => String(p.id) === String(editId));
       const { data: sessionData } = await supabase.auth.getSession();
       const session = sessionData.session;
       if (!session) {
-        location.href = '/admin/supabase-login';
+        const base = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
+        location.href = `${base}/admin/supabase-login`;
         return;
       }
 

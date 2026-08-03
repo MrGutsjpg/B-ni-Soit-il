@@ -1,11 +1,13 @@
 ---
+const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
+const placeholderImage = `${siteBase}/images/placeholder.svg`;
 ---
 <section id="galeria" class="container mx-auto py-16">
   <h2 class="font-serif text-2xl text-primary mb-6">Galeria</h2>
   <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-    <img src="/images/placeholder.svg" alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src="/images/placeholder.svg" alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src="/images/placeholder.svg" alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
-    <img src="/images/placeholder.svg" alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
+    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
+    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
+    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
+    <img src={placeholderImage} alt="produto" class="w-full h-48 object-cover card-border p-1 bg-white" />
   </div>
 </section>

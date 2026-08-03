@@ -1,12 +1,15 @@
 ---
+const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
+const menuCardapio = `${siteBase}/cardapio`;
+const menuEncomendas = `${siteBase}/encomendas`;
 ---
 <section class="container mx-auto text-center py-20">
   <div class="max-w-2xl mx-auto">
     <h1 class="font-serif text-4xl md:text-6xl text-primary">Arte francesa em cada detalhe</h1>
     <p class="mt-6 text-gray-700">Tradição e cuidado artesanal em produtos de padaria fina.</p>
     <div class="mt-8 flex justify-center gap-4">
-      <a href={Astro.resolve('/cardapio')} class="btn-primary">Ver cardápio</a>
-      <a href={Astro.resolve('/encomendas')} class="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-md">Fazer encomenda</a>
+      <a href={menuCardapio} class="btn-primary">Ver cardápio</a>
+      <a href={menuEncomendas} class="border border-[var(--color-primary)] text-[var(--color-primary)] px-5 py-2 rounded-md">Fazer encomenda</a>
     </div>
   </div>
 </section>

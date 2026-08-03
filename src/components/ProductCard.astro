@@ -1,5 +1,7 @@
 ---
 const { title, description, price, image, id } = Astro.props;
+const siteBase = import.meta.env.SITE ? new URL(import.meta.env.SITE).pathname.replace(/\/$/, '') : '';
+const productOrderUrl = `${siteBase}/encomendas?product=${encodeURIComponent(title)}&id=${id}`;
 ---
 <article class="card-border p-4 rounded-md bg-white">
   <img src={image} alt={title} class="w-full h-40 object-cover rounded-md mb-4" />
@@ -7,6 +9,6 @@ const { title, description, price, image, id } = Astro.props;
   <p class="text-gray-600 mt-2">{description}</p>
   <div class="mt-4 flex items-center justify-between">
     <span class="font-semibold">R$ {price}</span>
-    <a class="btn-primary" href={Astro.resolve(`/encomendas?product=${encodeURIComponent(title)}&id=${id}`)}>Encomendar</a>
+    <a class="btn-primary" href={productOrderUrl}>Encomendar</a>
   </div>
 </article>
