@@ -34,7 +34,6 @@
   </form>
 
   <script type="module">
-    import { supabase } from '/src/lib/supabaseClient.js';
     (function(){
       const form = document.getElementById('orderForm');
       const msg = document.getElementById('orderMessage');
@@ -49,15 +48,9 @@
         const payload = Object.fromEntries(data.entries());
         // try to store in Supabase orders table if available, otherwise fallback to local endpoint
         try {
-          const { data: sessionData } = await supabase.auth.getSession();
-          const session = sessionData.session;
-          if (session) {
-            await supabase.from('orders').insert(payload);
-          } else {
-            await fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
-          }
+          await fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) });
         } catch (e) {
-          try { await fetch('/api/orders', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(payload) }); } catch (err) { console.warn('Falha ao gravar order localmente', err); }
+          console.warn('Falha ao gravar order localmente', e);
         }
 
         // abrir WhatsApp com mensagem predefinida para o número da loja
